@@ -1,9 +1,19 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const amqp = require("amqplib/callback_api");
+const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const s3 = new S3Client({
+    region: process.env.S3_REGION,
+    credentials: {
+      accessKeyId: process.env.S3_ACCESS_KEY,
+      secretAccessKey: process.env.S3_SECRET_KEY,
+    },
+  });
 
 // MongoDB Connection
 mongoose
@@ -34,19 +44,23 @@ amqp.connect("amqp://user:password@localhost:5672", (error0, connection) => {
     channel.sendToQueue(queue, Buffer.from(msg));
     console.log(`Sent: ${msg}`);
 
-     // Consumer: Listen for messages in the queue
-     channel.consume(queue, (msg) => {
+    // Consumer: Listen for messages in the queue
+    channel.consume(
+      queue,
+      (msg) => {
         console.log(`Received: ${msg.content.toString()}`);
         // Here you can process the message as needed
-      }, {
-        noAck: true
-      });
+      },
+      {
+        noAck: true,
+      }
+    );
   });
 });
 
 // Routes and middleware
 app.get("/", (req, res) => {
-  res.send("Hello from Node.js with Docker!");
+  res.send("Hello from Node.js with Docker!"); 
 });
 
 app.listen(PORT, () => {
