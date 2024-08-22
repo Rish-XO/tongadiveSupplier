@@ -95,7 +95,7 @@ amqp.connect(process.env.RABBITMQ_URI, (error0, connection) => {
               // Process the data from the Excel file
               worksheet.forEach(row => {
                 // Here, you could store the row in MongoDB or perform other operations
-                // console.log(row);
+                // console.log(row)
               });
 
               console.log("File processed successfully:", fileDetails.filepath);
@@ -117,37 +117,34 @@ amqp.connect(process.env.RABBITMQ_URI, (error0, connection) => {
 
 // Generate Signed URL and Queue File for Processing
 app.get("/generateSignedUrl", async (req, res) => {
-  try {
-    const fileName = req.query.filename;
-    if (!fileName) {
-      return res.status(400).send("Filename query parameter is required");
+    try {
+      const filePath = req.query.filename;
+  
+      const params = {
+        Bucket: process.env.S3_BUCKET_NAME, 
+        Key: filePath, 
+        ContentType: "application/octet-stream", 
+      };
+  
+      const command = new PutObjectCommand(params);
+      const url = await getSignedUrl(s3, command, { expiresIn: 3600 }); // URL expires in 1 hour
+  
+      // Save file metadata to MongoDB
+      const newFile = new File({
+        filename: filePath, 
+        filepath: filePath,
+      });
+  
+      await newFile.save();
+      console.log(`File metadata saved: ${filePath}`);
+  
+      res.json({ url });
+    } catch (err) {
+      console.error("Failed to generate signed URL", err);
+      res.status(500).send("Failed to generate signed URL");
     }
-
-    const filePath = `uploads/${Date.now()}_${fileName}`;
-    const params = {
-      Bucket: process.env.S3_BUCKET_NAME, 
-      Key: filePath, 
-      ContentType: "application/octet-stream", 
-    };
-
-    const command = new PutObjectCommand(params);
-    const url = await getSignedUrl(s3, command, { expiresIn: 3600 }); // URL expires in 1 hour
-
-    // Save file metadata to MongoDB
-    const newFile = new File({
-      filename: fileName,
-      filepath: filePath,
-    });
-
-    await newFile.save();
-    console.log(`File metadata saved: ${filePath}`);
-
-    res.json({ url });
-  } catch (err) {
-    console.error("Failed to generate signed URL", err);
-    res.status(500).send("Failed to generate signed URL");
-  }
-});
+  });
+  
 
 // Endpoint to Queue File for Processing After Upload
 app.post("/processUploadedFile", async (req, res) => {
