@@ -22,7 +22,7 @@ exports.generateSignedUrl = async (req, res) => {
     };
 
     const command = new PutObjectCommand(params);
-    const url = await getSignedUrl(s3, command, { expiresIn: 3600 }); // URL expires in 1 hour
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
 
     // Save file metadata to MongoDB
     const newFile = new File({

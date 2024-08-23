@@ -79,7 +79,7 @@ amqp.connect(process.env.RABBITMQ_URI, (error0, connection) => {
               }
             });
           } catch (err) {
-            console.error("Error processing chunk:", err);
+            console.error("Error processing chunk: Invalid file", err);
             channel.nack(msg); 
           }
         }
