@@ -15,7 +15,7 @@ services:
       - rabbitmq_logs:/var/log/rabbitmq
 
   mongodb:
-    image: mongo:latest
+    image: mongo:latest 
     container_name: mongodb
     ports:
       - "2018:27017" # Map MongoDB's default port to port 2018 on the host

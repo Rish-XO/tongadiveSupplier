@@ -22,6 +22,7 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 app.use(cors());
 
+// move to config folder 
 const s3 = new S3Client({
   region: process.env.S3_REGION,
   endpoint: process.env.S3_ENDPOINT,

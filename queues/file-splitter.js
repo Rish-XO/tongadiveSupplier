@@ -1,4 +1,6 @@
-require("dotenv").config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -22,7 +24,7 @@ const s3 = new S3Client({
 });
 
 // RabbitMQ Connection for the Consumer and Chunk Processing Queue
-amqp.connect("amqp://user:password@localhost:5672", (error0, connection) => {
+amqp.connect(process.env.RABBITMQ_URI, (error0, connection) => {
   if (error0) {
     throw error0;
   }

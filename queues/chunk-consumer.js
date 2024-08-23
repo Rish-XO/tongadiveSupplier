@@ -1,4 +1,6 @@
-require("dotenv").config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+
 const mongoose = require("mongoose");
 const amqp = require("amqplib/callback_api");
 const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
