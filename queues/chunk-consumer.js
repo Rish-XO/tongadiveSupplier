@@ -7,7 +7,6 @@ const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const Supplier = require("../models/Supplier");
 const s3 = require('../config/s3Client');
 
-// MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI, {})
   .then(() => {
@@ -60,8 +59,8 @@ amqp.connect(process.env.RABBITMQ_URI, (error0, connection) => {
                 (item) =>
                   new Supplier({
                     supplierName: item.SupplierName,
-                    amount: parseFloat(item.Amount), // Convert to number if necessary
-                    contactNumber: item.ContactNumber.toString(), // Convert to string if necessary
+                    amount: parseFloat(item.Amount),
+                    contactNumber: item.ContactNumber.toString(),
                     email: item.Email,
                     address: item.Address,
                     country: item.Country,
@@ -76,12 +75,12 @@ amqp.connect(process.env.RABBITMQ_URI, (error0, connection) => {
                 channel.ack(msg);
               } catch (error) {
                 console.error("Failed to insert chunk data", error);
-                channel.nack(msg); // Requeue the message on failure
+                channel.nack(msg); 
               }
             });
           } catch (err) {
             console.error("Error processing chunk:", err);
-            channel.nack(msg); // Requeue the message on failure
+            channel.nack(msg); 
           }
         }
       },

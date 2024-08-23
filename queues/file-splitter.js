@@ -32,7 +32,6 @@ amqp.connect(process.env.RABBITMQ_URI, (error0, connection) => {
       durable: true,
     });
 
-    // Purge the queue to remove all existing messages
     channel.purgeQueue(queue, (err, ok) => {
       if (err) {
         console.error("Error purging queue:", err);
@@ -67,7 +66,7 @@ amqp.connect(process.env.RABBITMQ_URI, (error0, connection) => {
 
               // Parse the Excel file
               const workbook = XLSX.read(buffer, { type: "buffer" });
-              const sheetName = workbook.SheetNames[0]; // Assuming data is in the first sheet
+              const sheetName = workbook.SheetNames[0];
               const worksheet = XLSX.utils.sheet_to_json(
                 workbook.Sheets[sheetName]
               );
@@ -101,7 +100,7 @@ amqp.connect(process.env.RABBITMQ_URI, (error0, connection) => {
             });
           } catch (err) {
             console.error("Error processing file:", err);
-            channel.nack(msg); // Requeue the message on failure
+            channel.nack(msg);
           }
         }
       },
