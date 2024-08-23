@@ -22,7 +22,7 @@ amqp.connect(process.env.RABBITMQ_URI, (error0, connection) => {
       throw error1;
     }
     const queue = "fileProcessingQueue";
-    const chunkQueue = "chunkProcessingQueue"; // New queue for chunk processing
+    const chunkQueue = "chunkProcessingQueue"; 
 
     channel.assertQueue(queue, {
       durable: true,
