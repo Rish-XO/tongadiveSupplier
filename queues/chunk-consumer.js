@@ -3,18 +3,9 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const mongoose = require("mongoose");
 const amqp = require("amqplib/callback_api");
-const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
-const Supplier = require("../models/Supplier"); // Assuming this model is defined according to your schema
-
-const s3 = new S3Client({
-  region: process.env.S3_REGION,
-  endpoint: process.env.S3_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY,
-    secretAccessKey: process.env.S3_SECRET_KEY,
-  },
-  forcePathStyle: true,
-});
+const { GetObjectCommand } = require("@aws-sdk/client-s3");
+const Supplier = require("../models/Supplier");
+const s3 = require('../config/s3Client');
 
 // MongoDB Connection
 mongoose

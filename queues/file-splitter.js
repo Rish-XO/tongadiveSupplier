@@ -1,27 +1,14 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
 const amqp = require("amqplib/callback_api");
 const {
-  S3Client,
   PutObjectCommand,
   GetObjectCommand,
 } = require("@aws-sdk/client-s3");
-const XLSX = require("xlsx"); // Add XLSX to parse Excel files
-const { v4: uuidv4 } = require('uuid'); // To generate unique identifiers for each chunk
-
-const s3 = new S3Client({
-  region: process.env.S3_REGION,
-  endpoint: process.env.S3_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY,
-    secretAccessKey: process.env.S3_SECRET_KEY,
-  },
-  forcePathStyle: true,
-});
+const XLSX = require("xlsx");
+const { v4: uuidv4 } = require('uuid');
+const s3 = require('../config/s3Client');
 
 // RabbitMQ Connection for the Consumer and Chunk Processing Queue
 amqp.connect(process.env.RABBITMQ_URI, (error0, connection) => {

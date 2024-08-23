@@ -4,34 +4,17 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const amqp = require("amqplib/callback_api");
 const {
-  S3Client,
   PutObjectCommand,
-  GetObjectCommand,
 } = require("@aws-sdk/client-s3");
-const XLSX = require("xlsx"); // Add XLSX to parse Excel files
-
-const File = require("./models/File"); // Import the File model
+const s3 = require('./config/s3Client');
+const File = require("./models/File");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-
-//// Upload directly to s3 -> Q s3 file
-
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Express middleware to parse JSON
 app.use(express.json());
 app.use(cors());
-
-// move to config folder 
-const s3 = new S3Client({
-  region: process.env.S3_REGION,
-  endpoint: process.env.S3_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY,
-    secretAccessKey: process.env.S3_SECRET_KEY,
-  },
-  forcePathStyle: true,
-});
 
 // MongoDB Connection
 mongoose
